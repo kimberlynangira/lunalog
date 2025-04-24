@@ -1,0 +1,10 @@
+body {
+    background-color: #f8f8f8; /* Example light grey */
+  }
+
+  .registration-header {
+    background: linear-gradient(to right, #your_pink_color, #your_purple_color); /* Replace with actual colors */
+    color: white;
+    /* Add padding, text alignment, etc. as needed */
+  }
+  

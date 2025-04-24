@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - LunaLog</title>
+    <style>
+        :root {
+            --primary-color: #e83e8c;
+            --primary-light: #f875b0;
+            --primary-gradient: linear-gradient(to right, #e83e8c, #7b68ee);
+            --secondary-color: #7b68ee;
+            --text-color: #333;
+            --text-light: #777;
+            --white: #fff;
+            --light-bg: #f8f9fa;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin-right: 20px;
+        }
+
+        .nav-links li {
+            margin: 0 15px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, 
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .profile-btn {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .profile-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+
+        /* Resources Filter Tabs */
+        .resource-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .resource-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .resource-tab {
+            padding: 15px 25px;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .resource-tab.active {
+            color: var(--primary-color);
+        }
+
+        .resource-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        /* Resources Grid */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .resource-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .resource-img {
+            height: 180px;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 3rem;
+        }
+
+        .resource-content {
+            padding: 25px;
+        }
+
+        .resource-tag {
+            display: inline-block;
+            background-color: rgba(232, 62, 140, 0.1);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        .resource-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .resource-description {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .resource-btn {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .resource-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Featured Resource */
+        .featured-resource {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            display: flex;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .featured-img {
+            flex: 0 0 40%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 4rem;
+        }
+
+        .featured-content {
+            flex: 0 0 60%;
+            padding: 30px;
+        }
+
+        .featured-tag {
+            display: inline-block;
+            background-color: rgba(232, 62, 140, 0.1);
+            color: var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .featured-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .featured-description {
+            color: var(--text-light);
+            margin-bottom: 25px;
+        }
+
+        .featured-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 25px;
+        }
+
+        /* Search Form */
+        .search-form {
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 0 8px 8px 0;
+            padding: 0 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--white);
+            padding: 30px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            color: var(--text-light);
+        }
+
+        .footer-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-left: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-resource {
+                flex-direction: column;
+            }
+
+            .featured-img {
+                height: 200px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">LunaLog</a>
+            <nav class="nav">
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="calendar.html" class="nav-link">Calendar</a></li>
+                    <li><a href="healthinsights.html" class="nav-link">Health Insights</a></li>
+                    <li><a href="resources.html" class="nav-link active">Resources</a></li>
+                    <li><a href="contactprovider.html" class="nav-link">Contact Provider</a></li>
+                </ul>
+                <a href="profile.html" class="profile-btn">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Resources & Education</h1>
+            
+            <!-- Search Form -->
+            <form class="search-form">
+                <input type="text" class="search-input" placeholder="Search resources...">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+            
+            <!-- Featured Resource -->
+            <div class="featured-resource">
+                <div class="featured-img">
+                    📘
+                </div>
+                <div class="featured-content">
+                    <div class="featured-tag">Featured Guide</div>
+                    <h2 class="featured-title">Understanding Heavy Menstrual Bleeding: Causes, Management, and When to Seek Help</h2>
+                    <p class="featured-description">This comprehensive guide explains the common causes of heavy menstrual bleeding, evidence-based management strategies, and important signs that indicate when you should consult a healthcare provider. Learn about diet modifications, lifestyle changes, and medical treatments that can help manage heavy periods.</p>
+                    <div class="featured-meta">
+                        <span>15 min read</span>
+                        <span>Last updated: April 15, 2025</span>
+                    </div>
+                    <a href="https://teachmeobgyn.com/gynaecology/menstrual/heavy-bleeding/" target="_blankm" class="resource-btn">Read Full Guide</a>
+                </div>
+            </div>
+            
+            <!-- Resource Tabs -->
+            <div class="resource-tabs">
+                <div class="resource-tab active" data-category="all">All Resources</div>
+                <div class="resource-tab" data-category="articles">Articles</div>
+                <div class="resource-tab" data-category="videos">Videos</div>
+                <div class="resource-tab" data-category="guides">Guides</div>
+                <div class="resource-tab" data-category="nutrition">Nutrition</div>
+                <div class="resource-tab" data-category="exercise">Exercise</div>
+                <div class="resource-tab" data-category="stress">Stress Management</div>
+                <div class="resource-tab" data-category="medical">Medical</div>
+            </div>
+            
+            <!-- Resources Grid -->
+            <div class="resources-grid">
+                <!-- Resource Card 1 -->
+                <div class="resource-card">
+                    <div class="resource-img">
+                        📝
+                    </div>
+                    <div class="resource-content">
+                        <div class="resource-tag">Article</div>
+                        <h3 class="resource-title">Understanding Your Menstrual Cycle Phases</h3>
+                        <p class="resource-description">A comprehensive guide to understanding the four phases of your menstrual cycle and what happens in your body during each phase.</p>
+                        <div class="resource-meta">
+                            <span>8 min read</span>
+                            <span>Mar 30, 2025</span>
+                        </div>
+                        <a href="https://www.betterhealth.vic.gov.au/health/conditionsandtreatments/menstrual-cycle" target="_blank" class="resource-btn">Read Article</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-img">
+                        🎥
+                    </div>
+                       <!-- Resource Card 2 -->
+                    <div class="resource-content">
+                        <div class="resource-tag">Video</div>
+                        <h3 class="resource-title">Managing Heavy Periods: Expert Advice</h3>
+                        <p class="resource-description">Learn from Dr. Lora Shahine as she explains how to identify, understand the causes of, and prepare for doctor visits regarding heavy menstrual bleeding. [00:00:00]</p>
+                        <div class="resource-meta">
+                            <span>10 min video</span>
+                            <span>Apr 10, 2025</span>
+                        </div>
+                        <a href="http://www.youtube.com/watch?v=hcA5L8T-aZQ" target="_blank" class="resource-btn">Watch Video</a>
+                    </div>
+                </div>
+                
+                <!-- Resource Card 3 -->
+                <div class="resource-card">
+                    <div class="resource-img">
+                        🍎
+                    </div>
+                    <div class="resource-content">
+                        <div class="resource-tag">Nutrition</div>
+                        <h3 class="resource-title">Nutrition for Menstrual Health</h3>
+                        <p class="resource-description">Learn about the best foods to eat during different phases of your cycle to support hormonal balance and reduce symptoms.</p>
+                        <div class="resource-meta">
+                            <span>12 min read</span>
+                            <span>Apr 5, 2025</span>
+                        </div>
+                        <a href="https://www.megawecare.com/good-health-by-yourself/menstrual-health/what-to-eat-during-periods-foods-that-reduce-cramps?utm_source=google&utm_medium=cpc&utm_campaign=search_ad&utm_term=text&gad_source=1&gbraid=0AAAAABR-ryvVHYHyBxEKoHhcZijZOp9cE&gclid=CjwKCAjwwqfABhBcEiwAZJjC3kbrdQhF-A4_F-_E6jhG8z-9mwT28-CF_f3qZsavX5HsV7i00cYZpRoCcJ8QAvD_BwE" target="_blank" class="resource-btn">View Guide</a>
+                    </div>
+                </div>
+                
+                <!-- Resource Card 4 -->
+                <div class="resource-card">
+                    <div class="resource-img">
+                        🧘‍♀️
+                    </div>
+                    <div class="resource-content">
+                        <div class="resource-tag">Exercise</div>
+                        <h3 class="resource-title">Exercises for Menstrual Pain Relief</h3>
+                        <p class="resource-description">Collection of gentle yoga poses and exercises specifically designed to alleviate menstrual cramps and discomfort.</p>
+                        <div class="resource-meta">
+                            <span>3 min routine</span>
+                            <span>Mar 25, 2025</span>
+                        </div>
+                        <a href="https://youtu.be/516wWsO7Rzs?si=kgbBGve8GFVAS5hW" target="_blank" class="resource-btn">Start Exercise</a>
+                    </div>
+                </div>
+                
+                <!-- Resource Card 5 -->
+                <div class="resource-card">
+                    <div class="resource-img">
+                        🧠
+                    </div>
+                    <div class="resource-content">
+                        <div class="resource-tag">Stress Management</div>
+                        <h3 class="resource-title">Mental Wellness During PMS</h3>
+                        <p class="resource-description">Strategies and techniques for managing mood swings, anxiety, and other emotional symptoms associated with PMS.</p>
+                        <div class="resource-meta">
+                            <span>10 min read</span>
+                            <span>Apr 12, 2025</span>
+                        </div>
+                        <a href="https://www.iesohealth.com/wellbeing-blog/taking-care-of-your-mental-health-during-pms" target="_blank" class="resource-btn">Learn More</a>
+                    </div>
+                </div>
+                
+                <!-- Resource Card 6 -->
+                <div class="resource-card">
+                    <div class="resource-img">
+                        👩‍⚕️
+                    </div>
+                    <div class="resource-content">
+                        <div class="resource-tag">Medical</div>
+                        <h3 class="resource-title">When to See a Doctor</h3>
+                        <p class="resource-description">Important signs and symptoms that indicate when you should consult a healthcare provider about your menstrual cycle.</p>
+                        <div class="resource-meta">
+                            <span>6 min read</span>
+                            <span>Apr 8, 2025</span>
+                        </div>
+                        <a href="https://www.healthline.com/health/womens-health/period-signs" target="_blank" class="resource-btn">Read Guidelines</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p class="footer-text">&copy; 2025 LunaLog. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Resource Tab Filtering
+            const resourceTabs = document.querySelectorAll('.resource-tab');
+            
+            resourceTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    resourceTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Get the category
+                    const category = this.getAttribute('data-category');
+                    
+                    // In a real app, this would filter the resources based on category
+                    // For demo purposes, we'll just show an alert
+                    alert(`Filtering resources by category: ${category}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunaLog - Login</title>
+    <style>
+        :root {
+            --primary-color: #e83e8c;
+            --primary-light: #f875b0;
+            --primary-gradient: linear-gradient(to right, #e83e8c, #7b68ee);
+            --secondary-color: #7b68ee;
+            --text-color: #333;
+            --text-light: #777;
+            --white: #fff;
+            --light-bg: #f8f9fa;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --blue: #0d6efd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .login-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .app-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--blue);
+            margin-bottom: 10px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subheading {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            margin-right: 10px;
+        }
+
+        .form-check-label {
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--blue);
+            background-image: var(--primary-gradient);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 14px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+
+        a {
+            color: var(--blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 0.2em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spinner-border .75s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spinner-border {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Hide the default checkbox */
+        .custom-checkbox {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        /* Create a custom checkbox */
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: #eee;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* On mouse-over, add a grey background color */
+        .custom-checkbox:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        /* When the checkbox is checked, add a colored background */
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Create the checkmark/indicator (hidden when not checked) */
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        /* Show the checkmark when checked */
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        /* Style the checkmark/indicator */
+        .custom-checkbox .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="logo-section">
+                <h1 class="app-logo">LunaLog</h1>
+                <p class="subheading">Login to your account</p>
+            </div>
+            
+            <div id="loginAlert" class="alert alert-danger" role="alert">
+                Invalid credentials. Please try again.
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                </div>
+                
+                <div class="form-check">
+                    <label class="custom-checkbox">
+                        Remember me
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn" id="loginButton">Login</button>
+            </form>
+        </div>
+        
+        <div class="signup-link">
+            Don't have an account? <a href="register.html">Sign up</a>
+        </div>
+    </div>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', function() {
+    // Check if redirected with clear parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('clear')) {
+        // Clear any existing tokens
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        // Remove the parameter from URL
+        window.history.replaceState({}, document.title, 'loginpage.html');
+    }
+    
+    // Check if user is already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Add a button to allow logout instead of automatic redirect
+        const container = document.querySelector('.container');
+        
+        if (container) {
+            // Create logout message and button
+            const logoutDiv = document.createElement('div');
+            logoutDiv.className = 'logout-message';
+            logoutDiv.innerHTML = `
+                <div class="alert alert-warning" style="display: block;">
+                    You are already logged in. Would you like to logout?
+                </div>
+                <button id="logoutBtn" class="btn btn-warning" style="margin-bottom: 20px;">Logout</button>
+                <button id="dashboardBtn" class="btn" style="margin-bottom: 20px;">Go to Dashboard</button>
+            `;
+            
+            // Insert at the beginning of the container
+            container.insertBefore(logoutDiv, container.firstChild);
+            
+            // Add logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('userId');
+                window.location.reload();
+            });
+            
+            // Add dashboard redirect
+            document.getElementById('dashboardBtn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            
+            // Hide the login form
+            const loginCard = document.querySelector('.login-card');
+            if (loginCard) {
+                loginCard.style.display = 'none';
+            }
+        }
+        
+        return;
+    }
+
+    // Setup login form
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+});
+
+function handleLogin(event) {
+    event.preventDefault();
+    
+    // Get form data
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    
+    // Basic validation
+    if (!email || !password) {
+        showAlert('Please enter both email and password.');
+        return;
+    }
+    
+    // Hide any previous alerts
+    hideAlert();
+    
+    // Show loading state
+    const submitButton = document.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging in...';
+    
+    // Send login request
+    fetch('/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+    })
+    .then(async response => {
+        const data = await response.json().catch(() => ({}));
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Login failed. Please check your credentials.');
+        }
+        
+        return data;
+    })
+    .then(data => {
+        console.log('Login successful:', data);
+        
+        // Save authentication data
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            if (data.userId) {
+                localStorage.setItem('userId', data.userId);
+            }
+            
+            // Redirect to dashboard
+            window.location.href = 'index.html';
+        } else {
+            throw new Error('Authentication failed. No token received.');
+        }
+    })
+    .catch(error => {
+        console.error('Login error:', error);
+        showAlert(error.message || 'Login failed. Please try again.');
+    })
+    .finally(() => {
+        // Re-enable button and reset text
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+    });
+}
+
+function showAlert(message, type = 'danger') {
+    const alertElement = document.getElementById('loginAlert');
+    if (!alertElement) return;
+    
+    alertElement.textContent = message;
+    alertElement.style.display = 'block';
+    
+    // Update alert styling based on type
+    alertElement.className = 'alert';
+    alertElement.classList.add(`alert-${type}`);
+    
+    if (type === 'success') {
+        alertElement.style.backgroundColor = '#d4edda';
+        alertElement.style.color = '#155724';
+        alertElement.style.borderColor = '#c3e6cb';
+    } else if (type === 'warning') {
+        alertElement.style.backgroundColor = '#fff3cd';
+        alertElement.style.color = '#856404';
+        alertElement.style.borderColor = '#ffeeba';
+    } else {
+        alertElement.style.backgroundColor = '#f8d7da';
+        alertElement.style.color = '#721c24';
+        alertElement.style.borderColor = '#f5c6cb';
+    }
+}
+
+function hideAlert() {
+    const alertElement = document.getElementById('loginAlert');
+    if (alertElement) {
+        alertElement.style.display = 'none';
+    }
+}
+    </script>
+</body>
+</html>

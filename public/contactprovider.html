@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Provider - LunaLog</title>
+    <style>
+        :root {
+            --primary-color: #e83e8c;
+            --primary-light: #f875b0;
+            --primary-gradient: linear-gradient(to right, #e83e8c, #7b68ee);
+            --secondary-color: #7b68ee;
+            --text-color: #333;
+            --text-light: #777;
+            --white: #fff;
+            --light-bg: #f8f9fa;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin-right: 20px;
+        }
+
+        .nav-links li {
+            margin: 0 15px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, 
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .profile-btn {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .profile-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            padding: 40px 0;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+
+        /* Page Layout */
+        .page-layout {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 30px;
+        }
+
+        /* Form Styles */
+        .form-container {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .form-description {
+            color: var(--text-light);
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group .form-control {
+            padding-right: 40px;
+        }
+
+        .input-group-append {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #d42e7a;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* Provider Cards */
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .provider-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .provider-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .provider-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            color: var(--white);
+            font-size: 2.5rem;
+        }
+
+        .provider-name {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .provider-specialty {
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .provider-description {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .provider-details {
+            margin-bottom: 20px;
+        }
+
+        .provider-details p {
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .provider-details p span {
+            margin-right: 8px;
+        }
+
+        .availability-tag {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+
+        /* Messages Styles */
+        .messages-container {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+
+        .messages-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .messages-title {
+            font-size: 1.3rem;
+            color: var(--text-color);
+        }
+
+        .message-item {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: var(--light-bg);
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .message-item:hover {
+            transform: translateX(5px);
+        }
+
+        .message-item.unread {
+            border-left-color: var(--primary-color);
+        }
+
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .message-preview {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .message-time {
+            color: var(--text-light);
+            font-size: 0.8rem;
+            text-align: right;
+        }
+
+        /* Sidebar Info Card */
+        .info-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .info-card-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .info-list li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .info-list li strong {
+            display: block;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--white);
+            padding: 30px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            color: var(--text-light);
+        }
+
+        .footer-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-left: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .page-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .provider-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">LunaLog</a>
+            <nav class="nav">
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="calendar.html" class="nav-link">Calendar</a></li>
+                    <li><a href="healthinsights.html" class="nav-link">Health Insights</a></li>
+                    <li><a href="resources.html" class="nav-link">Resources</a></li>
+                    <li><a href="contactprovider.html" class="nav-link active">Contact Provider</a></li>
+                </ul>
+                <a href="profile.html" class="profile-btn">Profile</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Contact Healthcare Providers</h1>
+            
+            <div class="page-layout">
+                <div class="main-column">
+                    <!-- Schedule Appointment Form -->
+                    <div class="form-container">
+                        <h2 class="form-title">Schedule an Appointment</h2>
+                        <p class="form-description">Book a consultation with a healthcare professional to discuss your menstrual health concerns.</p>
+                        
+                        <div class="form-group">
+                            <label for="providerSelect">Select Provider:</label>
+                            <select id="providerSelect" class="form-control">
+                                <option value="">-- Select a Provider --</option>
+                                <option value="dr-johnson">Dr. Sarah Johnson - Gynecologist</option>
+                                <option value="dr-chen">Dr. Michael Chen - Endocrinologist</option>
+                                <option value="nurse-roberts">Nurse Alice Roberts - Women's Health</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentType">Appointment Type:</label>
+                            <select id="appointmentType" class="form-control">
+                                <option value="initial">Initial Consultation</option>
+                                <option value="follow-up">Follow-up Appointment</option>
+                                <option value="emergency">Urgent Care</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentDate">Preferred Date:</label>
+                            <input type="date" id="appointmentDate" class="form-control" min="2025-04-22">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentTime">Preferred Time:</label>
+                            <select id="appointmentTime" class="form-control">
+                                <option value="">-- Select a Time --</option>
+                                <option value="morning-early">Morning (9:00 AM - 10:30 AM)</option>
+                                <option value="morning-late">Late Morning (11:00 AM - 12:30 PM)</option>
+                                <option value="afternoon-early">Early Afternoon (1:30 PM - 3:00 PM)</option>
+                                <option value="afternoon-late">Late Afternoon (3:30 PM - 5:00 PM)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="appointmentReason">Reason for Appointment:</label>
+                            <textarea id="appointmentReason" class="form-control" rows="4" placeholder="Please briefly describe your symptoms or concerns..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Share Your Data:</label>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <input type="checkbox" id="shareCycleData" style="margin-right: 10px;">
+                                <label for="shareCycleData">Share my cycle data with the provider</label>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <input type="checkbox" id="shareHealthData" style="margin-right: 10px;">
+                                <label for="shareHealthData">Share my health logs (stress, diet, exercise)</label>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <input type="checkbox" id="shareSymptomData" style="margin-right: 10px;">
+                                <label for="shareSymptomData">Share my symptom history</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn" id="scheduleAppointmentBtn">Schedule Appointment</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Healthcare Providers -->
+                    <h2 class="form-title">Our Healthcare Providers</h2>
+                    <div class="provider-grid">
+                        <div class="provider-card">
+                            <div class="provider-avatar">👩‍⚕️</div>
+                            <h3 class="provider-name">Dr. Sarah Johnson</h3>
+                            <p class="provider-specialty">Gynecologist</p>
+                            <div class="availability-tag">Available Today</div>
+                            <p class="provider-description">Specializes in menstrual disorders, heavy periods, and hormonal imbalances. Over a decade of experience helping women manage reproductive health concerns.</p>
+                            <div class="provider-details">
+                                <p><span>📆</span> Available: Mon, Wed, Fri</p>
+                                <p><span>🏥</span> Virtual & In-Person Visits</p>
+                            </div>
+                            <button class="btn btn-outline">View Profile</button>
+                        </div>
+                        
+                        <div class="provider-card">
+                            <div class="provider-avatar">👨‍⚕️</div>
+                            <h3 class="provider-name">Dr. Michael Chen</h3>
+                            <p class="provider-specialty">Endocrinologist</p>
+                            <div class="availability-tag">Available Tomorrow</div>
+                            <p class="provider-description">Expert in hormonal imbalances, PCOS, and related menstrual issues. Focuses on holistic approaches to treating hormonal disorders.</p>
+                            <div class="provider-details">
+                                <p><span>📆</span> Available: Tue, Thu</p>
+                                <p><span>🏥</span> Virtual Visits Only</p>
+                            </div>
+                            <button class="btn btn-outline">View Profile</button>
+                        </div>
+                        
+                        <div class="provider-card">
+                            <div class="provider-avatar">👩‍⚕️</div>
+                            <h3 class="provider-name">Nurse Alice Roberts</h3>
+                            <p class="provider-specialty">Women's Health Nurse</p>
+                            <div class="availability-tag">Available Today</div>
+                            <p class="provider-description">Provides counseling and education on menstrual health management. Specializes in lifestyle interventions for menstrual symptoms.</p>
+                            <div class="provider-details">
+                                <p><span>📆</span> Available: Mon-Fri</p>
+                                <p><span>🏥</span> Virtual & In-Person Visits</p>
+                            </div>
+                            <button class="btn btn-outline">View Profile</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Send Message Form -->
+                    <div class="form-container">
+                        <h2 class="form-title">Send Message to Provider</h2>
+                        <p class="form-description">Have a quick question or need to follow up? Send a message directly to your healthcare provider.</p>
+                        
+                        <div class="form-group">
+                            <label for="messageProvider">Select Provider:</label>
+                            <select id="messageProvider" class="form-control">
+                                <option value="">-- Select a Provider --</option>
+                                <option value="dr-johnson">Dr. Sarah Johnson - Gynecologist</option>
+                                <option value="dr-chen">Dr. Michael Chen - Endocrinologist</option>
+                                <option value="nurse-roberts">Nurse Alice Roberts - Women's Health</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="messageSubject">Subject:</label>
+                            <input type="text" id="messageSubject" class="form-control" placeholder="Enter message subject">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="messageContent">Message:</label>
+                            <textarea id="messageContent" class="form-control" rows="5" placeholder="Type your message here..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Attachments:</label>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; align-items: center;">
+                                    <input type="checkbox" id="attachCycleData" style="margin-right: 10px;">
+                                    <label for="attachCycleData">Attach my latest cycle report</label>
+                                </div>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="checkbox" id="attachHealthData" style="margin-right: 10px;">
+                                    <label for="attachHealthData">Attach my health trends report</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn" id="sendMessageBtn">Send Message</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-column">
+                    <!-- Recent Messages Box -->
+                    <div class="messages-container">
+                        <div class="messages-header">
+                            <h3 class="messages-title">Recent Messages</h3>
+                            <a href="#" style="color: var(--primary-color); font-size: 0.9rem; text-decoration: none;">View All</a>
+                        </div>
+                        
+                        <div class="message-item unread">
+                            <div class="message-sender">Dr. Sarah Johnson</div>
+                            <div class="message-preview">Thank you for sharing your cycle data. Based on the patterns I'm seeing, I'd like to discuss some options during our next appointment...</div>
+                            <div class="message-time">Today, 10:23 AM</div>
+                        </div>
+                        
+                        <div class="message-item">
+                            <div class="message-sender">Nurse Alice Roberts</div>
+                            <div class="message-preview">I've reviewed the nutrition plan we discussed. Here are some additional iron-rich food suggestions that might help with your fatigue symptoms...</div>
+                            <div class="message-time">Yesterday, 2:45 PM</div>
+                        </div>
+                        
+                        <div class="message-item">
+                            <div class="message-sender">Appointment System</div>
+                            <div class="message-preview">Your appointment with Dr. Michael Chen has been confirmed for April 25, 2025 at 10:00 AM. Please remember to...</div>
+                            <div class="message-time">Apr 18, 2025</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Appointments -->
+                    <div class="info-card">
+                        <h3 class="info-card-title">Upcoming Appointments</h3>
+                        <ul class="info-list">
+                            <li>
+                                <strong>Dr. Michael Chen</strong>
+                                April 25, 2025 at 10:00 AM<br>
+                                Virtual Consultation<br>
+                                <a href="#" style="color: var(--primary-color); font-size: 0.9rem; text-decoration: none;">Reschedule</a> | 
+                                <a href="#" style="color: #dc3545; font-size: 0.9rem; text-decoration: none;">Cancel</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Provider Info -->
+                    <div class="info-card">
+                        <h3 class="info-card-title">Healthcare Access Info</h3>
+                        <ul class="info-list">
+                            <li>
+                                <strong>Virtual Consultation</strong>
+                                Connect with providers through secure video calls directly through the LunaLog platform.
+                            </li>
+                            <li>
+                                <strong>In-Person Visits</strong>
+                                Women's Health Clinic<br>
+                                123 Wellness Avenue<br>
+                                Suite 300<br>
+                                New York, NY 10001
+                            </li>
+                            <li>
+                                <strong>Emergency Contact</strong>
+                                For urgent matters, please call:<br>
+                                (555) 123-4567
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p class="footer-text">&copy; 2025 LunaLog. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Schedule Appointment Button
+            const scheduleAppointmentBtn = document.getElementById('scheduleAppointmentBtn');
+            if (scheduleAppointmentBtn) {
+                scheduleAppointmentBtn.addEventListener('click', function() {
+                    // In a real app, this would submit the form data
+                    // For demo purposes, we'll just show an alert
+                    alert('Appointment request submitted! You will receive a confirmation email shortly.');
+                    
+                    // Reset form
+                    document.getElementById('providerSelect').value = '';
+                    document.getElementById('appointmentType').value = 'initial';
+                    document.getElementById('appointmentDate').value = '';
+                    document.getElementById('appointmentTime').value = '';
+                    document.getElementById('appointmentReason').value = '';
+                    document.getElementById('shareCycleData').checked = false;
+                    document.getElementById('shareHealthData').checked = false;
+                    document.getElementById('shareSymptomData').checked = false;
+                });
+            }
+            
+            // Send Message Button
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+            if (sendMessageBtn) {
+                sendMessageBtn.addEventListener('click', function() {
+                    // In a real app, this would submit the message
+                    // For demo purposes, we'll just show an alert
+                    alert('Message sent successfully to healthcare provider!');
+                    
+                    // Reset form
+                    document.getElementById('messageProvider').value = '';
+                    document.getElementById('messageSubject').value = '';
+                    document.getElementById('messageContent').value = '';
+                    document.getElementById('attachCycleData').checked = false;
+                    document.getElementById('attachHealthData').checked = false;
+                });
+            }
+            
+            // Message Item Click
+            const messageItems = document.querySelectorAll('.message-item');
+            messageItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // In a real app, this would open the message detail view
+                    // For demo purposes, we'll just show an alert
+                    const sender = this.querySelector('.message-sender').textContent;
+                    alert(`Opening message from ${sender}`);
+                    
+                    // Remove unread class
+                    this.classList.remove('unread');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

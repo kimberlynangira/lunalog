@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunaLog - AI Period Tracking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e83e8c;
+            --secondary: #6f42c1;
+            --light-bg: #f8f4f8;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary) !important;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 3rem 1rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+        .feature-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-primary:hover {
+            background-color: #d5307c;
+            border-color: #d5307c;
+        }
+        .prediction-container {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .calendar-container {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .profile-btn {
+            background-color: var(--white);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 20px;
+            padding: 8px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+        .tab-content {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0 0 1rem 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        #loading-indicator {
+            display: none;
+            margin-top: 1rem;
+        }
+        .period-day {
+            background-color: rgba(232, 62, 140, 0.2);
+            border-radius: 50%;
+        }
+        .fertile-day {
+            background-color: rgba(111, 66, 193, 0.2);
+            border-radius: 50%;
+        }
+        .ovulation-day {
+            background-color: rgba(111, 66, 193, 0.4);
+            border-radius: 50%;
+        }
+        .current-day {
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+        }
+        .calendar-legend {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .result-container {
+            display: none;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background-color: #f8f4f8;
+            margin-top: 1.5rem;
+        }
+        .stress-icon, .diet-icon, .exercise-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">LunaLog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendar.html">Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="healthinsights.html">Health Insights</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="resources.html">Resources</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contactprovider.html">Contact Provider</a>
+                    </li>
+                </ul>
+                <a href="profile.html" class="profile-btn">Profile</a>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="hero-section text-center">
+            <h1>Know Your Menstrual Health</h1>
+            <p class="lead">Track, understand, and optimize your menstrual wellness with AI-powered insights</p>
+            <p>Understand your body, and stay prepared every step of the way.</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="prediction-container">
+                    <h2 class="text-center mb-4">Predict My Next Cycle</h2>
+                    <form id="prediction-form">
+                        <div class="mb-3">
+                            <label for="lastPeriodDate" class="form-label">Date of Last Period:</label>
+                            <input type="date" class="form-control" id="lastPeriodDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cycleLength" class="form-label">Average Cycle Length (days):</label>
+                            <input type="number" class="form-control" id="cycleLength" min="21" max="35" value="28">
+                        </div>
+                        <div class="mb-3">
+                            <label for="periodLength" class="form-label">Average Period Length (days):</label>
+                            <input type="number" class="form-control" id="periodLength" min="2" max="10" value="5">
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">Get Prediction</button>
+                        </div>
+                    </form>
+                    <div id="loading-indicator" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Analyzing your cycle pattern...</p>
+                    </div>
+                    <div id="prediction-result" class="result-container">
+                        <h3 class="text-center mb-3">Your Menstrual Forecast</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Next Period</h5>
+                                        <p class="card-text fs-4 text-primary" id="next-period-date">April 28 - May 3</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Fertile Window</h5>
+                                        <p class="card-text fs-4 text-secondary" id="fertile-window">April 13 - April 19</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Personalized Recommendations</h5>
+                                <ul class="list-group list-group-flush" id="recommendations">
+                                    <li class="list-group-item"><span class="stress-icon">🧘</span> Your stress levels may increase 3-5 days before your period. Consider scheduling relaxation activities.</li>
+                                    <li class="list-group-item"><span class="diet-icon">🍎</span> Increase iron-rich foods during your period to help with potential blood loss.</li>
+                                    <li class="list-group-item"><span class="exercise-icon">🏃‍♀️</span> Light to moderate exercise can help reduce menstrual discomfort.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="calendar-container">
+                    <h2 class="text-center mb-4">Your Menstrual Calendar</h2>
+                    <div id="calendar">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button class="btn btn-sm btn-outline-secondary" id="prev-month">&lt; Previous</button>
+                            <h4 id="current-month-year">April 2025</h4>
+                            <button class="btn btn-sm btn-outline-secondary" id="next-month">Next &gt;</button>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Sun</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendar-body">
+                                <!-- Calendar will be generated here -->
+                            </tbody>
+                        </table>
+                        <div class="calendar-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: rgba(232, 62, 140, 0.2);"></div>
+                                <span>Period</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: rgba(111, 66, 193, 0.2);"></div>
+                                <span>Fertile Window</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: rgba(111, 66, 193, 0.4);"></div>
+                                <span>Ovulation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="wellnessTrackerTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="stress-tab" data-bs-toggle="tab" data-bs-target="#stress-pane" type="button">Stress</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="diet-tab" data-bs-toggle="tab" data-bs-target="#diet-pane" type="button">Diet</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="exercise-tab" data-bs-toggle="tab" data-bs-target="#exercise-pane" type="button">Exercise</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="wellness-tab" data-bs-toggle="tab" data-bs-target="#wellness-pane" type="button">Overall Wellness</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="wellnessTrackerContent">
+                    <div class="tab-pane fade show active" id="stress-pane" role="tabpanel">
+                        <h3 class="mb-3">Stress Tracking</h3>
+                        <form id="stress-form">
+                            <div class="mb-3">
+                                <label for="stressDate" class="form-label">Date:</label>
+                                <input type="date" class="form-control" id="stressDate" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label for="stressLevel" class="form-label">Stress Level (1-10):</label>
+                                <input type="range" class="form-range" min="1" max="10" id="stressLevel">
+                                <div class="d-flex justify-content-between">
+                                    <span>Low</span>
+                                    <span>Medium</span>
+                                    <span>High</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="stressFactors" class="form-label">Stress Factors:</label>
+                                <select class="form-select" id="stressFactors" multiple>
+                                    <option value="work">Work/School</option>
+                                    <option value="relationships">Relationships</option>
+                                    <option value="health">Health Concerns</option>
+                                    <option value="financial">Financial Issues</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="stressNotes" class="form-label">Notes:</label>
+                                <textarea class="form-control" id="stressNotes" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="diet-pane" role="tabpanel">
+                        <h3 class="mb-3">Diet Tracking</h3>
+                        <form id="diet-form">
+                            <div class="mb-3">
+                                <label for="dietDate" class="form-label">Date:</label>
+                                <input type="date" class="form-control" id="dietDate" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Meals Consumed:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="breakfast">
+                                    <label class="form-check-label" for="breakfast">Breakfast</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="lunch">
+                                    <label class="form-check-label" for="lunch">Lunch</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="dinner">
+                                    <label class="form-check-label" for="dinner">Dinner</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="snacks">
+                                    <label class="form-check-label" for="snacks">Snacks</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Food Groups Consumed:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fruits">
+                                    <label class="form-check-label" for="fruits">Fruits</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="vegetables">
+                                    <label class="form-check-label" for="vegetables">Vegetables</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="proteins">
+                                    <label class="form-check-label" for="proteins">Proteins</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="grains">
+                                    <label class="form-check-label" for="grains">Grains</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="dairy">
+                                    <label class="form-check-label" for="dairy">Dairy</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="waterIntake" class="form-label">Water Intake (glasses):</label>
+                                <input type="number" class="form-control" id="waterIntake" min="0" max="20">
+                            </div>
+                            <div class="mb-3">
+                                <label for="dietNotes" class="form-label">Notes:</label>
+                                <textarea class="form-control" id="dietNotes" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="exercise-pane" role="tabpanel">
+                        <h3 class="mb-3">Exercise Tracking</h3>
+                        <form id="exercise-form">
+                            <div class="mb-3">
+                                <label for="exerciseDate" class="form-label">Date:</label>
+                                <input type="date" class="form-control" id="exerciseDate" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exerciseType" class="form-label">Exercise Type:</label>
+                                <select class="form-select" id="exerciseType">
+                                    <option value="cardio">Cardio</option>
+                                    <option value="strength">Strength Training</option>
+                                    <option value="flexibility">Flexibility/Yoga</option>
+                                    <option value="walking">Walking</option>
+                                    <option value="swimming">Swimming</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exerciseDuration" class="form-label">Duration (minutes):</label>
+                                <input type="number" class="form-control" id="exerciseDuration" min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="exerciseIntensity" class="form-label">Intensity:</label>
+                                <select class="form-select" id="exerciseIntensity">
+                                    <option value="low">Low</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="high">High</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exerciseNotes" class="form-label">Notes:</label>
+                                <textarea class="form-control" id="exerciseNotes" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="wellness-pane" role="tabpanel">
+                        <h3 class="mb-3">Overall Wellness</h3>
+                        <form id="wellness-form">
+                            <div class="mb-3">
+                                <label for="wellnessDate" class="form-label">Date:</label>
+                                <input type="date" class="form-control" id="wellnessDate" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sleepHours" class="form-label">Sleep Duration (hours):</label>
+                                <input type="number" class="form-control" id="sleepHours" min="0" max="24" step="0.5">
+                            </div>
+                            <div class="mb-3">
+                                <label for="sleepQuality" class="form-label">Sleep Quality:</label>
+                                <select class="form-select" id="sleepQuality">
+                                    <option value="poor">Poor</option>
+                                    <option value="fair">Fair</option>
+                                    <option value="good">Good</option>
+                                    <option value="excellent">Excellent</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="mood" class="form-label">Mood:</label>
+                                <select class="form-select" id="mood">
+                                    <option value="very-low">Very Low</option>
+                                    <option value="low">Low</option>
+                                    <option value="neutral">Neutral</option>
+                                    <option value="good">Good</option>
+                                    <option value="excellent">Excellent</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Symptoms:</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="headache">
+                                    <label class="form-check-label" for="headache">Headache</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="cramps">
+                                    <label class="form-check-label" for="cramps">Cramps</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="bloating">
+                                    <label class="form-check-label" for="bloating">Bloating</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="fatigue">
+                                    <label class="form-check-label" for="fatigue">Fatigue</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="breast-tenderness">
+                                    <label class="form-check-label" for="breast-tenderness">Breast Tenderness</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="wellnessNotes" class="form-label">Notes:</label>
+                                <textarea class="form-control" id="wellnessNotes" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-white py-4 mt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 LunaLog | AI-Driven Period Tracking App for Women's Health</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none me-3">Terms of Service</a>
+                    <a href="#" class="text-decoration-none">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
