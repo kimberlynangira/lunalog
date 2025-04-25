@@ -9,7 +9,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initialize calendar
-    renderCalendar(today.getMonth(), today.getFullYear());
+    window.currentMonth = today.getMonth();
+    window.currentYear = today.getFullYear();
+    
+    // Initialize calendar data with fixed dates
+    // This would normally come from the database in a real app
+    window.calendarData = {
+        // Period days - May 5-8, 2025
+        periodDays: [
+            new Date(2025, 4, 5),
+            new Date(2025, 4, 6),
+            new Date(2025, 4, 7),
+            new Date(2025, 4, 8)
+        ],
+        // Fertile window - April 16-21, 2025
+        fertileDays: [
+            new Date(2025, 3, 16),
+            new Date(2025, 3, 17),
+            new Date(2025, 3, 18),
+            new Date(2025, 3, 19),
+            new Date(2025, 3, 20),
+            new Date(2025, 3, 21)
+        ],
+        // Ovulation day - April 19, 2025
+        ovulationDay: new Date(2025, 3, 19)
+    };
+    
+    renderCalendar(window.currentMonth, window.currentYear);
 
     // Add event listeners
     const predictionForm = document.getElementById('prediction-form');
@@ -47,10 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (wellnessForm) {
         wellnessForm.addEventListener('submit', handleFormSubmit);
     }
-
-    // Set global variables for calendar navigation
-    window.currentMonth = today.getMonth();
-    window.currentYear = today.getFullYear();
     
     console.log('LunaLog application loaded successfully');
 });
@@ -94,9 +116,34 @@ function handlePrediction(e) {
         // Update the UI with prediction results
         updatePredictionResults(prediction);
         
+        // Update the global calendar data to use for highlighting
+        window.calendarData = {
+            periodDays: getDateArray(prediction.nextPeriodStart, prediction.nextPeriodEnd),
+            fertileDays: getDateArray(prediction.fertileWindowStart, prediction.fertileWindowEnd),
+            ovulationDay: prediction.ovulationDay
+        };
+        
         // Update calendar with predictions
-        updateCalendarWithPredictions(prediction);
+        renderCalendar(window.currentMonth, window.currentYear);
     }, 1500); // Simulating AI processing time of 1.5 seconds
+}
+
+/**
+ * Creates an array of Date objects between start and end dates, inclusive
+ * @param {Date} startDate - Start date
+ * @param {Date} endDate - End date
+ * @returns {Array} - Array of Date objects
+ */
+function getDateArray(startDate, endDate) {
+    const dateArray = [];
+    let currentDate = new Date(startDate);
+    
+    while (currentDate <= endDate) {
+        dateArray.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return dateArray;
 }
 
 /**
@@ -231,15 +278,6 @@ function updatePredictionResults(prediction) {
 }
 
 /**
- * Updates the calendar with predicted period and fertility days
- * @param {Object} prediction - Object containing prediction data
- */
-function updateCalendarWithPredictions(prediction) {
-    // Re-render the calendar with prediction data
-    renderCalendar(window.currentMonth, window.currentYear, prediction);
-}
-
-/**
  * Formats a Date object to a human-readable string
  * @param {Date} date - Date to format
  * @returns {string} - Formatted date string
@@ -253,9 +291,8 @@ function formatDate(date) {
  * Renders the calendar for a specific month and year
  * @param {number} month - Month to render (0-11)
  * @param {number} year - Year to render
- * @param {Object} prediction - Optional prediction data to highlight days
  */
-function renderCalendar(month, year, prediction = null) {
+function renderCalendar(month, year) {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
@@ -283,45 +320,48 @@ function renderCalendar(month, year, prediction = null) {
         // Create cells for this row
         for (let j = 0; j < 7; j++) {
             const cell = document.createElement('td');
-            cell.className = 'text-center p-2';
+            cell.className = 'text-center';
             
-            if (i === 0 && j < startingDay) {
+            if ((i === 0 && j < startingDay) || date > daysInMonth) {
                 // Empty cell before the first day of the month
-                cell.textContent = '';
-            } else if (date > daysInMonth) {
-                // Break once we've reached the end of the month
-                break;
+                cell.innerHTML = '';
             } else {
-                // Fill with the date
-                cell.textContent = date;
+                // Create date cell with proper structure for styling
+                const currentDate = new Date(year, month, date);
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'd-flex justify-content-center align-items-center';
+                dayDiv.style.height = '2rem';
+                dayDiv.style.width = '2rem';
+                dayDiv.style.margin = '0 auto';
+                dayDiv.textContent = date;
                 
                 // Highlight today's date
-                const currentDate = new Date(year, month, date);
                 const today = new Date();
                 if (currentDate.getDate() === today.getDate() && 
                     currentDate.getMonth() === today.getMonth() && 
                     currentDate.getFullYear() === today.getFullYear()) {
-                    cell.classList.add('current-day');
+                    dayDiv.classList.add('current-day');
                 }
                 
-                // Highlight predicted days if prediction is available
-                if (prediction) {
-                    // Check if this date is within the predicted period
-                    if (isDateInRange(currentDate, prediction.nextPeriodStart, prediction.nextPeriodEnd)) {
-                        cell.classList.add('period-day');
+                // Highlight period, fertile, and ovulation days
+                if (window.calendarData) {
+                    // Check if this date is a period day
+                    if (isPeriodDay(currentDate, window.calendarData.periodDays)) {
+                        dayDiv.classList.add('period-day');
                     }
                     
-                    // Check if this date is within the fertile window
-                    if (isDateInRange(currentDate, prediction.fertileWindowStart, prediction.fertileWindowEnd)) {
-                        cell.classList.add('fertile-day');
+                    // Check if this date is a fertile day
+                    if (isFertileDay(currentDate, window.calendarData.fertileDays)) {
+                        dayDiv.classList.add('fertile-day');
                     }
                     
-                    // Check if this date is the ovulation day
-                    if (isSameDate(currentDate, prediction.ovulationDay)) {
-                        cell.classList.add('ovulation-day');
+                    // Check if this date is ovulation day
+                    if (isOvulationDay(currentDate, window.calendarData.ovulationDay)) {
+                        dayDiv.classList.add('ovulation-day');
                     }
                 }
                 
+                cell.appendChild(dayDiv);
                 date++;
             }
             
@@ -339,26 +379,46 @@ function renderCalendar(month, year, prediction = null) {
 }
 
 /**
- * Checks if a date is within a given range, inclusive
+ * Helper function to check if a date is a period day
  * @param {Date} date - Date to check
- * @param {Date} startDate - Start of range
- * @param {Date} endDate - End of range
- * @returns {boolean} - True if the date is within the range
+ * @param {Array} periodDays - Array of period day dates
+ * @returns {boolean} - True if the date is a period day
  */
-function isDateInRange(date, startDate, endDate) {
-    return date >= startDate && date <= endDate;
+function isPeriodDay(date, periodDays) {
+    if (!periodDays) return false;
+    return periodDays.some(periodDay => 
+        periodDay.getDate() === date.getDate() && 
+        periodDay.getMonth() === date.getMonth() && 
+        periodDay.getFullYear() === date.getFullYear()
+    );
 }
 
 /**
- * Checks if two dates are the same (ignoring time)
- * @param {Date} date1 - First date
- * @param {Date} date2 - Second date
- * @returns {boolean} - True if the dates are the same
+ * Helper function to check if a date is a fertile day
+ * @param {Date} date - Date to check
+ * @param {Array} fertileDays - Array of fertile day dates
+ * @returns {boolean} - True if the date is a fertile day
  */
-function isSameDate(date1, date2) {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+function isFertileDay(date, fertileDays) {
+    if (!fertileDays) return false;
+    return fertileDays.some(fertileDay => 
+        fertileDay.getDate() === date.getDate() && 
+        fertileDay.getMonth() === date.getMonth() && 
+        fertileDay.getFullYear() === date.getFullYear()
+    );
+}
+
+/**
+ * Helper function to check if a date is ovulation day
+ * @param {Date} date - Date to check
+ * @param {Date} ovulationDay - Ovulation day date
+ * @returns {boolean} - True if the date is ovulation day
+ */
+function isOvulationDay(date, ovulationDay) {
+    if (!ovulationDay) return false;
+    return date.getDate() === ovulationDay.getDate() && 
+           date.getMonth() === ovulationDay.getMonth() && 
+           date.getFullYear() === ovulationDay.getFullYear();
 }
 
 /**

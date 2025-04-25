@@ -652,517 +652,285 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Calendar View Buttons
-            const viewButtons = document.querySelectorAll('.calendar-nav-btn');
-            viewButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    viewButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // In a real app, this would switch between day, week, and month views
-                    // For this demo, we'll just show an alert
-                    alert(`Switching to ${this.textContent} view`);
-                });
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+    // Calendar View Buttons
+    const viewButtons = document.querySelectorAll('.calendar-nav-btn');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
             
-            // Generate Calendar
-            function generateCalendar(year, month) {
-                const firstDay = new Date(year, month, 1);
-                const lastDay = new Date(year, month + 1, 0);
-                const daysInMonth = lastDay.getDate();
-                const startingDay = firstDay.getDay(); // 0 = Sunday
+            // In a real app, this would switch between day, week, and month views
+            // For this demo, we'll just show an alert
+            alert(`Switching to ${this.textContent} view`);
+        });
+    });
+    
+    // Generate Calendar
+    function generateCalendar(year, month) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDay = firstDay.getDay(); // 0 = Sunday
+        
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        // Update the month display
+        document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
+        
+        const calendarGrid = document.getElementById('calendarGrid');
+        calendarGrid.innerHTML = '';
+        
+        let date = 1;
+        
+        // Create calendar grid
+        for (let i = 0; i < 6; i++) { // Up to 6 rows
+            const row = document.createElement('tr');
+            
+            for (let j = 0; j < 7; j++) { // 7 days in a week
+                const cell = document.createElement('td');
                 
-                const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                
-                // Update the month display
-                document.getElementById('currentMonth').textContent = `${monthNames[month]} ${year}`;
-                
-                const calendarGrid = document.getElementById('calendarGrid');
-                calendarGrid.innerHTML = '';
-                
-                let date = 1;
-                let dayCounter = 0;
-                
-                // Create calendar grid
-                for (let i = 0; i < 6; i++) { // Up to 6 rows
-                    const row = document.createElement('tr');
+                if ((i === 0 && j < startingDay) || date > daysInMonth) {
+                    // Empty cells before first day or after last day
+                    cell.innerHTML = '';
+                } else {
+                    // Create date cell
+                    const dateCell = document.createElement('div');
+                    dateCell.className = 'date-cell';
                     
-                    for (let j = 0; j < 7; j++) { // 7 days in a week
-                        const cell = document.createElement('td');
-                        
-                        if ((i === 0 && j < startingDay) || date > daysInMonth) {
-                            // Empty cells before first day or after last day
-                            cell.innerHTML = '';
-                        } else {
-                            // Create date cell
-                            const dateCell = document.createElement('div');
-                            dateCell.className = 'date-cell';
-                            
-                            // Check for special days
-                            const currentDate = new Date(year, month, date);
-                            const today = new Date();
-                            
-                            if (date === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                                dateCell.classList.add('today');
-                            }
-                            
-                            // Sample period days (April 21-25, 2025)
-                            if (month === 3 && date >= 21 && date <= 25) {
-                                dateCell.classList.add('period');
-                            }
-                            
-                            // Sample fertile days (April 5-10, 2025)
-                            if (month === 3 && date >= 5 && date <= 10) {
-                                dateCell.classList.add('fertile');
-                            }
-                            
-                            // Date number
-                            const dateNumber = document.createElement('div');
-                            dateNumber.className = 'date-number';
-                            dateNumber.textContent = date;
-                            dateCell.appendChild(dateNumber);
-                            
-                            // Add sample events for certain days
-                            if (month === 3) {
-                                // Add period event
-                                if (date >= 21 && date <= 25) {
-                                    const eventList = document.createElement('div');
-                                    eventList.className = 'event-list';
-                                    
-                                    const periodEvent = document.createElement('div');
-                                    periodEvent.className = 'event-item';
-                                    
-                                    const periodDot = document.createElement('span');
-                                    periodDot.className = 'event-dot period';
-                                    
-                                    periodEvent.appendChild(periodDot);
-                                    periodEvent.appendChild(document.createTextNode('Period'));
-                                    
-                                    eventList.appendChild(periodEvent);
-                                    dateCell.appendChild(eventList);
-                                }
-                                
-                                // Add fertile window event
-                                if (date >= 5 && date <= 10) {
-                                    let eventList = dateCell.querySelector('.event-list');
-                                    if (!eventList) {
-                                        eventList = document.createElement('div');
-                                        eventList.className = 'event-list';
-                                        dateCell.appendChild(eventList);
-                                    }
-                                    
-                                    const fertileEvent = document.createElement('div');
-                                    fertileEvent.className = 'event-item';
-                                    
-                                    const fertileDot = document.createElement('span');
-                                    fertileDot.className = 'event-dot fertile';
-                                    
-                                    fertileEvent.appendChild(fertileDot);
-                                    fertileEvent.appendChild(document.createTextNode('Fertile'));
-                                    
-                                    eventList.appendChild(fertileEvent);
-                                }
-                                
-                                // Add sample health notes
-                                if (date === 15 || date === 23) {
-                                    let eventList = dateCell.querySelector('.event-list');
-                                    if (!eventList) {
-                                        eventList = document.createElement('div');
-                                        eventList.className = 'event-list';
-                                        dateCell.appendChild(eventList);
-                                    }
-                                    
-                                    const noteEvent = document.createElement('div');
-                                    noteEvent.className = 'event-item';
-                                    
-                                    const noteDot = document.createElement('span');
-                                    noteDot.className = 'event-dot note';
-                                    
-                                    noteEvent.appendChild(noteDot);
-                                    noteEvent.appendChild(document.createTextNode(date === 15 ? 'Low stress' : 'High stress'));
-                                    
-                                    eventList.appendChild(noteEvent);
-                                }
-                            }
-                            
-                            cell.appendChild(dateCell);
-                            date++;
-                        }
-                        
-                        row.appendChild(cell);
+                    // Check for special days
+                    const currentDate = new Date(year, month, date);
+                    const today = new Date();
+                    
+                    if (date === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                        dateCell.classList.add('today');
                     }
                     
-                    calendarGrid.appendChild(row);
+                    // Date number
+                    const dateNumber = document.createElement('div');
+                    dateNumber.className = 'date-number';
+                    dateNumber.textContent = date;
+                    dateCell.appendChild(dateNumber);
                     
-                    // Stop generating rows if we've already used all days
-                    if (date > daysInMonth) {
-                        break;
-                    }
+                    cell.appendChild(dateCell);
+                    date++;
                 }
+                
+                row.appendChild(cell);
             }
             
-            // Initialize calendar for the current month
-            const today = new Date();
-            let currentYear = today.getFullYear();
-            let currentMonth = today.getMonth();
+            calendarGrid.appendChild(row);
             
-            generateCalendar(currentYear, currentMonth);
-            
-            // Calendar navigation
-            document.getElementById('prevMonth').addEventListener('click', function() {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                generateCalendar(currentYear, currentMonth);
-            });
-            
-            document.getElementById('nextMonth').addEventListener('click', function() {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                generateCalendar(currentYear, currentMonth);
-            });
-            
-            // Save Period Details button
-            document.getElementById('savePeriodBtn').addEventListener('click', function() {
-                // In a real app, this would save the data to a database
-                // For demo purposes, we'll just show an alert
-                alert('Period details saved successfully!');
-                
-                // Reset form
-                document.getElementById('periodStartDate').value = '';
-                document.getElementById('periodEndDate').value = '';
-                document.getElementById('flowIntensity').value = 'medium';
-                document.getElementById('notes').value = '';
-                
-                const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-            });
-        });
-    </script>
-    <script src="lunalog-calendar.js"></script>
-    <!-- Add this script tag right before the closing </body> tag in both HTML files -->
-<script>
-    // Direct fix for LunaLog calendar highlighting
-    document.addEventListener('DOMContentLoaded', function() {
-      // Function to directly update the calendar with hardcoded dates from the forecast
-      function updateCalendarHighlights() {
-        console.log("Updating calendar highlights...");
-        
-        // Hardcoded dates from your forecast display
-        const periodDates = {
-          start: new Date(2025, 4, 5), // May 5, 2025
-          end: new Date(2025, 4, 8)    // May 8, 2025
-        };
-        
-        const fertileDates = {
-          start: new Date(2025, 3, 16), // April 16, 2025
-          end: new Date(2025, 3, 21)    // April 21, 2025
-        };
-        
-        // Generate arrays of all the dates in each range
-        const allPeriodDates = getDatesInRange(periodDates.start, periodDates.end);
-        const allFertileDates = getDatesInRange(fertileDates.start, fertileDates.end);
-        
-        console.log("Period dates:", allPeriodDates);
-        console.log("Fertile dates:", allFertileDates);
-        
-        // Update the main calendar page (calendar.html)
-        updateMainCalendar(allPeriodDates, allFertileDates);
-        
-        // Update the mini calendar on the dashboard (index.html)
-        updateMiniCalendar(allPeriodDates, allFertileDates);
-      }
-      
-      // Helper function to get all dates in a range
-      function getDatesInRange(startDate, endDate) {
-        const dates = [];
-        let currentDate = new Date(startDate);
-        
-        while (currentDate <= endDate) {
-          dates.push(new Date(currentDate));
-          currentDate.setDate(currentDate.getDate() + 1);
+            // Stop generating rows if we've already used all days
+            if (date > daysInMonth) {
+                break;
+            }
         }
         
-        return dates;
-      }
-      
-      // Helper function to check if two dates are the same day
-      function isSameDay(date1, date2) {
-        return date1.getDate() === date2.getDate() && 
-               date1.getMonth() === date2.getMonth() && 
-               date1.getFullYear() === date2.getFullYear();
-      }
-      
-      // Update the main calendar on calendar.html
-      function updateMainCalendar(periodDates, fertileDates) {
-        // Get the current displayed month and year
-        const monthYearText = document.querySelector('h1.page-title + div h2')?.textContent || 
-                              document.querySelector('h1 + div h2')?.textContent ||
-                              document.getElementById('currentMonth')?.textContent || 
-                              'April 2025';
+        // Apply highlighting after generating the calendar
+        highlightPredictedDays();
+    }
+    
+    // Initialize calendar for the current month
+    const today = new Date();
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth();
+    
+    generateCalendar(currentYear, currentMonth);
+    
+    // Calendar navigation
+    document.getElementById('prevMonth').addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        generateCalendar(currentYear, currentMonth);
+    });
+    
+    document.getElementById('nextMonth').addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        generateCalendar(currentYear, currentMonth);
+    });
+    
+    // Save Period Details button
+    document.getElementById('savePeriodBtn').addEventListener('click', function() {
+        // In a real app, this would save the data to a database
+        // For demo purposes, we'll just show an alert
+        alert('Period details saved successfully!');
         
-        // Parse the month and year
-        const [monthName, yearStr] = monthYearText.trim().split(' ');
-        const monthNames = ["January", "February", "March", "April", "May", "June", 
-                             "July", "August", "September", "October", "November", "December"];
-        const monthIndex = monthNames.indexOf(monthName);
+        // Reset form
+        document.getElementById('periodStartDate').value = '';
+        document.getElementById('periodEndDate').value = '';
+        document.getElementById('flowIntensity').value = 'medium';
+        document.getElementById('notes').value = '';
+        
+        const checkboxes = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        // Update the calendar highlighting
+        highlightPredictedDays();
+    });
+    
+    // Highlight predicted days - FIXED VERSION
+    function highlightPredictedDays() {
+        const monthDisplay = document.getElementById('currentMonth');
+        if (!monthDisplay) return;
+        
+        const [monthName, yearStr] = monthDisplay.textContent.trim().split(' ');
         const year = parseInt(yearStr);
         
-        console.log("Current calendar view:", monthName, year);
+        // Get month index from month name
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthIndex = monthNames.indexOf(monthName);
         
-        // Find all date cells in the main calendar
-        const dateCells = document.querySelectorAll('.date-cell');
+        if (monthIndex === -1) return; // Invalid month name
         
-        if (dateCells.length > 0) {
-          console.log("Found", dateCells.length, "date cells in main calendar");
-          
-          // Clear existing highlights and events
-          dateCells.forEach(cell => {
-            // First remove any existing period or fertile classes
-            cell.classList.remove('period', 'fertile');
-            
-            // Remove existing period or fertile events
-            const eventList = cell.querySelector('.event-list');
-            if (eventList) {
-              const events = eventList.querySelectorAll('.event-item');
-              events.forEach(event => {
-                const text = event.textContent;
-                if (text.includes('Period') || text.includes('Fertile')) {
-                  event.remove();
-                }
-              });
-            }
-          });
-          
-          // Update each cell with the correct highlights
-          dateCells.forEach(cell => {
+        // Create actual Date objects for period and fertile days
+        // This allows proper comparison regardless of which month is displayed
+        const periodDates = [
+            new Date(2025, 4, 5), // May 5
+            new Date(2025, 4, 6), // May 6
+            new Date(2025, 4, 7), // May 7
+            new Date(2025, 4, 8)  // May 8
+        ];
+        
+        const fertileDates = [
+            new Date(2025, 3, 16), // April 16
+            new Date(2025, 3, 17), // April 17
+            new Date(2025, 3, 18), // April 18
+            new Date(2025, 3, 19), // April 19
+            new Date(2025, 3, 20), // April 20
+            new Date(2025, 3, 21)  // April 21
+        ];
+        
+        const stressDays = {
+            'April': { 15: 'Low stress', 23: 'High stress' }
+        };
+        
+        // Clear existing highlights first
+        clearHighlights();
+        
+        // Get all date cells and check each one
+        document.querySelectorAll('.date-cell').forEach(cell => {
             const dateNumber = cell.querySelector('.date-number');
-            if (!dateNumber || !dateNumber.textContent.trim()) return;
+            if (!dateNumber || !dateNumber.textContent) return;
             
             const day = parseInt(dateNumber.textContent);
             if (isNaN(day)) return;
             
+            // Create a date object for the current cell's date
             const currentDate = new Date(year, monthIndex, day);
             
-            // Check if this date is in the period range
-            const isPeriodDay = periodDates.some(date => isSameDay(date, currentDate));
-            
-            // Check if this date is in the fertile range
-            const isFertileDay = fertileDates.some(date => isSameDay(date, currentDate));
+            // Check if this date is in the period dates
+            const isPeriodDay = periodDates.some(periodDate => 
+                periodDate.getDate() === currentDate.getDate() && 
+                periodDate.getMonth() === currentDate.getMonth() && 
+                periodDate.getFullYear() === currentDate.getFullYear()
+            );
             
             if (isPeriodDay) {
-              cell.classList.add('period');
-              addEvent(cell, 'period', 'Period');
+                cell.classList.add('period');
+                addEventIndicator(cell, 'period', 'Period');
             }
+            
+            // Check if this date is in the fertile dates
+            const isFertileDay = fertileDates.some(fertileDate => 
+                fertileDate.getDate() === currentDate.getDate() && 
+                fertileDate.getMonth() === currentDate.getMonth() && 
+                fertileDate.getFullYear() === currentDate.getFullYear()
+            );
             
             if (isFertileDay) {
-              cell.classList.add('fertile');
-              addEvent(cell, 'fertile', 'Fertile');
+                cell.classList.add('fertile');
+                addEventIndicator(cell, 'fertile', 'Fertile');
             }
-          });
-        }
-      }
-      
-      // Helper function to add an event to a cell
-      function addEvent(cell, type, text) {
+            
+            // Check for stress days
+            if (stressDays[monthName] && stressDays[monthName][day]) {
+                addEventIndicator(cell, 'note', stressDays[monthName][day]);
+            }
+        });
+    }
+    
+    function clearHighlights() {
+        document.querySelectorAll('.date-cell').forEach(cell => {
+            cell.classList.remove('period', 'fertile');
+            
+            // Remove event indicators for Period and Fertile
+            const eventList = cell.querySelector('.event-list');
+            if (eventList) {
+                const periodEvents = eventList.querySelectorAll('.event-item');
+                periodEvents.forEach(event => {
+                    const text = event.textContent;
+                    if (text.includes('Period') || text.includes('Fertile') || text.includes('stress')) {
+                        event.remove();
+                    }
+                });
+                
+                // Remove empty event lists
+                if (eventList.children.length === 0) {
+                    eventList.remove();
+                }
+            }
+        });
+    }
+    
+    function findDateCell(day) {
+        let found = null;
+        document.querySelectorAll('.date-cell').forEach(cell => {
+            const dateNumber = cell.querySelector('.date-number');
+            if (dateNumber && parseInt(dateNumber.textContent) === day) {
+                found = cell;
+            }
+        });
+        return found;
+    }
+    
+    function addEventIndicator(cell, type, text) {
+        // Check if this indicator already exists
         let eventList = cell.querySelector('.event-list');
         
+        // Create event list if it doesn't exist
         if (!eventList) {
-          eventList = document.createElement('div');
-          eventList.className = 'event-list';
-          cell.appendChild(eventList);
+            eventList = document.createElement('div');
+            eventList.className = 'event-list';
+            cell.appendChild(eventList);
+        } else {
+            // Check if this event already exists
+            const existingEvents = eventList.querySelectorAll('.event-item');
+            for (let i = 0; i < existingEvents.length; i++) {
+                if (existingEvents[i].textContent.includes(text)) {
+                    return; // Skip if already exists
+                }
+            }
         }
         
-        const event = document.createElement('div');
-        event.className = 'event-item';
+        // Create and add the event item
+        const eventItem = document.createElement('div');
+        eventItem.className = 'event-item';
         
-        const dot = document.createElement('span');
-        dot.className = `event-dot ${type}`;
+        const eventDot = document.createElement('span');
+        eventDot.className = `event-dot ${type}`;
         
-        event.appendChild(dot);
-        event.appendChild(document.createTextNode(text));
+        eventItem.appendChild(eventDot);
+        eventItem.appendChild(document.createTextNode(text));
         
-        eventList.appendChild(event);
-      }
-      
-      // Update the mini calendar on the dashboard
-      function updateMiniCalendar(periodDates, fertileDates) {
-        // Get the current displayed month and year
-        const monthYearText = document.getElementById('currentMonth')?.textContent || 'April 2025';
-        
-        // Parse the month and year
-        const [monthName, yearStr] = monthYearText.trim().split(' ');
-        const monthNames = ["January", "February", "March", "April", "May", "June", 
-                             "July", "August", "September", "October", "November", "December"];
-        const monthIndex = monthNames.indexOf(monthName);
-        const year = parseInt(yearStr);
-        
-        console.log("Current mini calendar view:", monthName, year);
-        
-        // Find all day cells in the mini calendar
-        const calendarDays = document.querySelectorAll('.calendar-day');
-        
-        if (calendarDays.length > 0) {
-          console.log("Found", calendarDays.length, "days in mini calendar");
-          
-          // Clear existing highlights
-          calendarDays.forEach(day => {
-            day.classList.remove('period', 'fertile');
-          });
-          
-          // Update each day with the correct highlights
-          calendarDays.forEach(day => {
-            if (!day.textContent.trim()) return;
-            
-            const dayNum = parseInt(day.textContent);
-            if (isNaN(dayNum)) return;
-            
-            const currentDate = new Date(year, monthIndex, dayNum);
-            
-            // Check if this date is in the period range
-            const isPeriodDay = periodDates.some(date => isSameDay(date, currentDate));
-            
-            // Check if this date is in the fertile range
-            const isFertileDay = fertileDates.some(date => isSameDay(date, currentDate));
-            
-            if (isPeriodDay) day.classList.add('period');
-            if (isFertileDay) day.classList.add('fertile');
-          });
-        }
-      }
-      
-      // Call the function immediately to update on page load
-      updateCalendarHighlights();
-      
-      // Add event listeners to the navigation buttons to update when month changes
-      const prevMonthBtn = document.getElementById('prevMonth');
-      const nextMonthBtn = document.getElementById('nextMonth');
-      
-      if (prevMonthBtn) {
-        prevMonthBtn.addEventListener('click', function() {
-          // Give the browser time to update the DOM
-          setTimeout(updateCalendarHighlights, 100);
-        });
-      }
-      
-      if (nextMonthBtn) {
-        nextMonthBtn.addEventListener('click', function() {
-          // Give the browser time to update the DOM
-          setTimeout(updateCalendarHighlights, 100);
-        });
-      }
-      
-      // Add event listener to the prediction button to update after prediction
-      const predictBtn = document.getElementById('predictCycleBtn');
-      if (predictBtn) {
-        predictBtn.addEventListener('click', function() {
-          // Give the browser time to update the DOM
-          setTimeout(updateCalendarHighlights, 100);
-        });
-      }
-      
-      // Add event listener to period save button
-      const savePeriodBtn = document.getElementById('savePeriodBtn');
-      if (savePeriodBtn) {
-        savePeriodBtn.addEventListener('click', function() {
-          // Give the browser time to update the DOM
-          setTimeout(updateCalendarHighlights, 100);
-        });
-      }
-    });
+        eventList.appendChild(eventItem);
+    }
+    
+    // Apply highlighting immediately
+    highlightPredictedDays();
+    
+    // Remove the interval to prevent constant reapplication
+    // setInterval(highlightPredictedDays, 1000); // This line has been removed
+});
     </script>
-    <script>
-        // Final override to fix calendar highlighting - specifically for mini calendar on dashboard
-        (function() {
-          // Wait until everything is fully loaded
-          window.addEventListener('load', function() {
-            console.log("Final override running to fix mini calendar");
-            
-            // Use a longer timeout to ensure all other scripts have finished
-            setTimeout(fixMiniCalendar, 1000);
-            
-            // Also fix after clicking prev/next buttons
-            document.querySelectorAll('#prevMonth, #nextMonth').forEach(button => {
-              button.addEventListener('click', function() {
-                setTimeout(fixMiniCalendar, 500);
-              });
-            });
-            
-            // Fix after prediction calculation
-            const predictButton = document.getElementById('predictCycleBtn');
-            if (predictButton) {
-              predictButton.addEventListener('click', function() {
-                setTimeout(fixMiniCalendar, 500);
-              });
-            }
-          });
-          
-          function fixMiniCalendar() {
-            // Get current calendar month/year
-            const monthDisplay = document.getElementById('currentMonth');
-            if (!monthDisplay) return;
-            
-            const monthText = monthDisplay.textContent;
-            console.log("Current calendar month:", monthText);
-            
-            // Parse month and year
-            const [monthName, yearStr] = monthText.split(' ');
-            const monthIndex = ["January", "February", "March", "April", "May", "June", 
-                               "July", "August", "September", "October", "November", "December"].indexOf(monthName);
-            const year = parseInt(yearStr);
-            
-            console.log("Month index:", monthIndex, "Year:", year);
-            
-            // Clear any existing highlights first
-            document.querySelectorAll('.calendar-day').forEach(day => {
-              day.classList.remove('period', 'fertile');
-            });
-            
-            // If we're in April, show fertile window (Apr 16-21)
-            if (monthName === "April") {
-              // Highlight Apr 16-21 as fertile days
-              for (let day = 16; day <= 21; day++) {
-                const dayElement = findDayElement(day);
-                if (dayElement) {
-                  dayElement.classList.add('fertile');
-                  console.log("Added fertile class to day", day);
-                }
-              }
-            }
-            
-            // If we're in May, show period days (May 5-8)
-            if (monthName === "May") {
-              // Highlight May 5-8 as period days
-              for (let day = 5; day <= 8; day++) {
-                const dayElement = findDayElement(day);
-                if (dayElement) {
-                  dayElement.classList.add('period');
-                  console.log("Added period class to day", day);
-                }
-              }
-            }
-            
-            // Helper function to find the element for a specific day
-            function findDayElement(day) {
-              let element = null;
-              document.querySelectorAll('.calendar-day').forEach(dayEl => {
-                const dayText = dayEl.textContent.trim();
-                if (dayText === day.toString()) {
-                  element = dayEl;
-                }
-              });
-              return element;
-            }
-          }
-        })();
-        </script>
 </body>
 </html>

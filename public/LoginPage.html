@@ -281,7 +281,7 @@
         </div>
         
         <div class="signup-link">
-            Don't have an account? <a href="register.html">Sign up</a>
+            Don't have an account? <a href="RegisterPage.html">Sign up</a>
         </div>
     </div>
 
@@ -293,6 +293,7 @@
         // Clear any existing tokens
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
+        localStorage.removeItem('userEmail'); // Also clear userEmail
         // Remove the parameter from URL
         window.history.replaceState({}, document.title, 'loginpage.html');
     }
@@ -322,6 +323,7 @@
             document.getElementById('logoutBtn').addEventListener('click', function() {
                 localStorage.removeItem('token');
                 localStorage.removeItem('userId');
+                localStorage.removeItem('userEmail'); // Also clear userEmail
                 window.location.reload();
             });
             
@@ -369,7 +371,28 @@ function handleLogin(event) {
     submitButton.disabled = true;
     submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging in...';
     
-    // Send login request
+    // For testing without an API
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Simulate successful login (REMOVE IN PRODUCTION)
+        setTimeout(() => {
+            // Save the email for the profile page
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('token', 'dummy-token-for-testing');
+            localStorage.setItem('userId', 'dummy-user-id');
+            
+            // Show success message briefly
+            showAlert('Login successful! Redirecting...', 'success');
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }, 1000);
+        
+        return;
+    }
+    
+    // Send login request to real API
     fetch('/api/login', {
         method: 'POST',
         headers: {
@@ -398,6 +421,9 @@ function handleLogin(event) {
             if (data.userId) {
                 localStorage.setItem('userId', data.userId);
             }
+            
+            // Save the user's email for the profile page
+            localStorage.setItem('userEmail', email);
             
             // Redirect to dashboard
             window.location.href = 'index.html';

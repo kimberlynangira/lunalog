@@ -1110,5 +1110,144 @@
       }
     });
     </script>
+    <!-- Existing scripts remain in place -->
+    <script src="lunalog-calendar.js"></script>
+    <script>
+      // The existing script for "Direct fix for LunaLog calendar highlighting" stays here
+    </script>
+    
+    <!-- Add this new script at the end -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Function to highlight dashboard calendar
+        function highlightDashboardCalendar() {
+          console.log("Applying dashboard calendar highlights");
+          
+          // Fixed prediction dates
+          const periodDays = [5, 6, 7, 8]; // May 5-8
+          const fertileDays = [16, 17, 18, 19, 20, 21]; // April 16-21
+          
+          // Get current displayed month on the dashboard
+          const currentMonthElement = document.getElementById('currentMonth');
+          if (!currentMonthElement) return;
+          
+          const [monthName, yearStr] = currentMonthElement.textContent.trim().split(' ');
+          
+          // Find all calendar day elements in the mini calendar
+          const calendarDays = document.querySelectorAll('.calendar-day');
+          
+          if (calendarDays.length === 0) {
+            console.log("No calendar days found on dashboard");
+            return;
+          }
+          
+          console.log(`Found ${calendarDays.length} calendar days in ${monthName}`);
+          
+          // Clear existing highlights
+          calendarDays.forEach(day => {
+            day.classList.remove('period', 'fertile');
+          });
+          
+          // Apply styling based on current month
+          calendarDays.forEach(day => {
+            if (!day.textContent.trim()) return;
+            
+            const dayNum = parseInt(day.textContent.trim());
+            if (isNaN(dayNum)) return;
+            
+            if (monthName === 'May' && periodDays.includes(dayNum)) {
+              day.classList.add('period');
+            } else if (monthName === 'April' && fertileDays.includes(dayNum)) {
+              day.classList.add('fertile');
+            }
+          });
+        }
+        
+        // Apply highlighting initially and after a delay to ensure calendar is fully loaded
+        setTimeout(highlightDashboardCalendar, 200);
+        
+        // Set up an interval to continuously check and apply highlights
+        setInterval(highlightDashboardCalendar, 1000);
+        
+        // Also apply when navigation buttons are clicked
+        const prevBtn = document.getElementById('prevMonth');
+        const nextBtn = document.getElementById('nextMonth');
+        
+        if (prevBtn) {
+          prevBtn.addEventListener('click', function() {
+            setTimeout(highlightDashboardCalendar, 200);
+          });
+        }
+        
+        if (nextBtn) {
+          nextBtn.addEventListener('click', function() {
+            setTimeout(highlightDashboardCalendar, 200);
+          });
+        }
+        
+        // Apply when prediction button is clicked
+        const predictBtn = document.getElementById('predictCycleBtn');
+        if (predictBtn) {
+          predictBtn.addEventListener('click', function() {
+            setTimeout(highlightDashboardCalendar, 200);
+          });
+        }
+      });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // Wait for everything to load
+          setTimeout(function() {
+            // Run the function immediately and then set an interval to keep checking
+            highlightMiniCalendar();
+            setInterval(highlightMiniCalendar, 500);
+            
+            function highlightMiniCalendar() {
+              // Get current month display
+              const monthDisplay = document.getElementById('currentMonth');
+              if (!monthDisplay) return;
+              
+              const currentMonth = monthDisplay.textContent.split(' ')[0];
+              console.log("Current month on dashboard:", currentMonth);
+              
+              // Find all calendar days
+              const dashboardDays = document.querySelectorAll('.calendar-day');
+              console.log("Found dashboard days:", dashboardDays.length);
+              
+              // Apply direct styling with !important to override any conflicting styles
+              dashboardDays.forEach(day => {
+                if (!day.textContent.trim()) return;
+                
+                const dayNum = parseInt(day.textContent.trim());
+                if (isNaN(dayNum)) return;
+                
+                // Remove any existing styles first
+                day.style = "";
+                
+                // Apply new styles with !important flag
+                if (currentMonth === 'May' && [5, 6, 7, 8].includes(dayNum)) {
+                  day.style.cssText = "color: white !important; background-color: #e83e8c !important";
+                } else if (currentMonth === 'April' && [16, 17, 18, 19, 20, 21].includes(dayNum)) {
+                  day.style.cssText = "color: white !important; background-color: #7b68ee !important";
+                }
+              });
+            }
+            
+            // Listen for month navigation and prediction button clicks
+            document.getElementById('prevMonth')?.addEventListener('click', function() {
+              setTimeout(highlightMiniCalendar, 200);
+            });
+            
+            document.getElementById('nextMonth')?.addEventListener('click', function() {
+              setTimeout(highlightMiniCalendar, 200);
+            });
+            
+            document.getElementById('predictCycleBtn')?.addEventListener('click', function() {
+              setTimeout(highlightMiniCalendar, 200);
+            });
+          }, 500);
+        });
+      </script>
+
 </body>
 </html>

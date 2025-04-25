@@ -137,12 +137,21 @@
         }
 
         .profile-card {
-            background-color: var(--white);
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            padding: 25px;
-            transition: transform 0.3s ease;
-        }
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      text-align: center;
+         }
+         .profile-name {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.profile-email {
+    color: #777;
+    margin-bottom: 0;
+}
 
         .profile-avatar-container {
             text-align: center;
@@ -150,13 +159,12 @@
         }
 
         .profile-avatar {
-            border-radius: 50%;
-            width: 100px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary-light);
-        }
+    border-radius: 50% !important;
+    width: 100px !important;
+    height: 100px !important; 
+    object-fit: cover !important;
+    border: 3px solid var(--primary-light) !important;
+}
         
         .avatar-upload {
             position: relative;
@@ -435,27 +443,32 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <h1 class="page-title">User Profile</h1>
-            
-            <div class="profile-container">
-                <!-- User Profile Card -->
-                <div class="profile-card">
-                    <div class="profile-avatar-container">
-                        <div class="avatar-upload">
-                            <img id="profileAvatar" src="images/default-avatar.png" alt="Profile Avatar" class="profile-avatar">
-                            <div class="avatar-edit">
-                                <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" />
-                                <label for="imageUpload"></label>
-                            </div>
+  <!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <h1 class="page-title">User Profile</h1>
+        
+        <div class="profile-container">
+            <!-- User Profile Card -->
+            <div class="profile-card">
+                <div class="profile-avatar-container">
+                    <!-- Simplified avatar structure -->
+                    <div class="avatar-upload" style="position: relative; margin: 0 auto; width: 100px; height: 100px;">
+                        <img id="profileAvatar" src="https://via.placeholder.com/100" alt="Profile Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #f875b0;">
+                        <div class="avatar-edit" style="position: absolute; right: -5px; bottom: -5px; z-index: 10;">
+                            <input type='file' id="imageUpload" accept=".png, .jpg, .jpeg" />
+                            <label for="imageUpload"></label>
                         </div>
                     </div>
-                    <h2 class="profile-name" id="profileName">Username</h2>
-                    <p class="profile-email" id="profileEmail">user@example.com</p>
                 </div>
-                
+                <h2 class="profile-name" id="profileName">Username</h2>
+                <p class="profile-email" id="profileEmail">user@example.com</p>
+            </div>
+            
+            
+        </div>
+    </div>
+</main>
                 <!-- Profile Tabs -->
                 <div class="tabs-container">
                     <div class="tab-nav">
@@ -532,101 +545,145 @@
 
     <script>
         // Simple tab switching functionality
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all buttons and panels
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-                
-                // Add active class to clicked button
-                button.classList.add('active');
-                
-                // Show corresponding panel
-                const tabId = button.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // Profile image upload functionality
-        document.getElementById('imageUpload').addEventListener('change', function(e) {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    document.getElementById('profileAvatar').setAttribute('src', e.target.result);
-                }
-                
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Profile update functionality
-        document.getElementById('profileInfoForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const fullName = document.getElementById('fullName').value;
-            const bio = document.getElementById('bio').value;
-            
-            // Update displayed name on profile card
-            if (fullName) {
-                document.getElementById('profileName').textContent = fullName;
-            }
-            
-            // Show success message
-            const alertBox = document.getElementById('profileUpdateAlert');
-            alertBox.classList.add('show');
-            
-            // Hide alert after 3 seconds
-            setTimeout(() => {
-                alertBox.classList.remove('show');
-            }, 3000);
-        });
-
-        // Prefill email field with the username
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('email').value = 'user@example.com';
-            document.getElementById('profileEmail').textContent = 'user@example.com';
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-  fetch('/api/users/profile')
-    .then(response => {
-      if (!response.ok) {
-        // Handle potential errors (e.g., user not logged in)
-        console.error('Error fetching profile:', response.status);
-        return Promise.reject(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data && data.email) {
-        document.getElementById('email').value = data.email;
-        document.getElementById('profileEmail').textContent = data.email;
-        // You can also update other profile information here if needed
-        if (data.name) {
-          document.getElementById('profileName').textContent = data.name;
-        }
-        // ... other fields
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching user profile:', error);
-      // Optionally display an error message to the user
+     // Simple tab switching functionality
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+        // Remove active class from all buttons and panels
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        // Show corresponding panel
+        const tabId = button.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
     });
 });
 
-      // Logout functionality
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-        console.log('Logout button clicked!');
-        // Here you would typically:
-        // 1. Clear the user's session data (e.g., remove cookies, local storage items)
-        // 2. Redirect the user to the login page or another appropriate page
-    window.location.href = 'LoginPage.html'; // Replace 'login.html' with your actual login page URL
-  });
+// Profile image upload functionality
+document.getElementById('imageUpload').addEventListener('change', function(e) {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            document.getElementById('profileAvatar').setAttribute('src', e.target.result);
+        }
+        
+        reader.readAsDataURL(file);
+    }
+});
 
+// Profile update functionality
+document.getElementById('profileInfoForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form values
+    const fullName = document.getElementById('fullName').value;
+    const bio = document.getElementById('bio').value;
+    
+    // Update displayed name on profile card
+    if (fullName) {
+        document.getElementById('profileName').textContent = fullName;
+    }
+    
+    // Show success message
+    const alertBox = document.getElementById('profileUpdateAlert');
+    alertBox.classList.add('show');
+    
+    // Hide alert after 3 seconds
+    setTimeout(() => {
+        alertBox.classList.remove('show');
+    }, 3000);
+});
 
+// Load user profile data when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if we have a stored email from login
+    const storedEmail = localStorage.getItem('userEmail');
+    
+    if (storedEmail) {
+        // Use the stored email
+        document.getElementById('email').value = storedEmail;
+        document.getElementById('profileEmail').textContent = storedEmail;
+        
+        // Extract username from email as a fallback name if one isn't set
+        const usernameFromEmail = storedEmail.split('@')[0] || 'User';
+        // Only set the profile name if it isn't already customized
+        if (document.getElementById('profileName').textContent === 'Username' || 
+            document.getElementById('profileName').textContent === 'Actual User') {
+            document.getElementById('profileName').textContent = usernameFromEmail;
+        }
+    } else {
+        // For testing without a backend - REMOVE THIS IN PRODUCTION
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            const mockFetch = function(url) {
+                console.log('Mock fetch called with URL:', url);
+                
+                if (url === '/api/users/profile') {
+                    return Promise.resolve({
+                        ok: true,
+                        json: () => Promise.resolve({
+                            email: 'actual.user@example.com',
+                            name: 'Actual User',
+                            bio: 'This is a test bio for the actual user'
+                        })
+                    });
+                }
+                
+                // Fall back to actual fetch for other requests
+                return fetch(url);
+            };
+            
+            // Replace global fetch with mock version
+            window.originalFetch = window.fetch;
+            window.fetch = mockFetch;
+        }
+
+        // Fall back to API call if no stored email
+        fetch('/api/users/profile')
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Error fetching profile:', response.status);
+                    return Promise.reject(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.email) {
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('profileEmail').textContent = data.email;
+                    
+                    if (data.name) {
+                        document.getElementById('profileName').textContent = data.name;
+                        document.getElementById('fullName').value = data.name;
+                    }
+                    
+                    // Optionally update other profile fields if available
+                    if (data.bio) {
+                        document.getElementById('bio').value = data.bio;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user profile:', error);
+                // Fallback to a default message or handle accordingly
+                document.getElementById('profileEmail').textContent = 'Email not available';
+            });
+    }
+});
+
+// Logout functionality
+document.getElementById('logoutBtn').addEventListener('click', function() {
+    console.log('Logout button clicked!');
+    // Clear stored user data
+    localStorage.removeItem('userEmail');
+    // Here you would typically:
+    // 1. Clear other session data (e.g., remove other cookies, local storage items)
+    // 2. Redirect the user to the login page or another appropriate page
+    window.location.href = 'LoginPage.html'; // Replace with your actual login page URL
+});
     </script>
     
 </body>
